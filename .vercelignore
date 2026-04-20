@@ -1,0 +1,19 @@
+# Vercel ignore file
+.env
+.env.*
+!.env.example
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.log
+.DS_Store
+.git/
+.gitignore
+.vscode/
+*.md
+README*
+LICENSE
