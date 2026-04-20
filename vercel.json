@@ -1,14 +1,27 @@
 {
   "$schema": "https://openapi.vercel.com/schemas/project.json",
-  "framework": null,
-  "buildCommand": "pip install -r requirements.txt",
-  "outputDirectory": ".",
-  "installCommand": "pip install -r requirements.txt",
-  "devCommand": "uvicorn main:app --host 0.0.0.0 --port $PORT",
+  "builds": [
+    {
+      "src": "api/index.py",
+      "use": "@vercel/python"
+    },
+    {
+      "src": "index.html",
+      "use": "@vercel/static"
+    }
+  ],
   "routes": [
     {
-      "src": "/(.*)",
+      "src": "/api/(.*)",
       "dest": "/api/index.py"
+    },
+    {
+      "src": "/ask",
+      "dest": "/api/index.py"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
     }
   ]
 }
