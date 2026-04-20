@@ -7,7 +7,7 @@ st.title("🤖 CSV AI Agent")
 
 # Determine API URL based on environment
 # For local development, use localhost; for production, use Render
-API_URL = os.environ.get("API_URL", "http://localhost:8000")
+API_URL = os.environ.get("API_URL", "https://csv-analysis-agent.onrender.com")
 
 # Sidebar: File Upload
 with st.sidebar:
