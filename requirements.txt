@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+jinja2
+langchain
+langchain-openai
+langchain-groq
+langgraph
+python-dotenv
+pandas
+starlette
+httpx
