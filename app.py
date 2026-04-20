@@ -25,7 +25,7 @@ if st.button("Send"):
         with st.spinner("Agent is thinking..."):
             # Send request to your FastAPI backend
             try:
-                response = requests.post("http://localhost:8000", json={"user_input": user_query})
+                response = requests.post("API_URL"="https://csv-analysis-agent.onrender.com, json={"user_input": user_query})
                 
                 if response.status_code == 200:
                     st.markdown(f"**Agent:** {response.json()['agent_response']}")
