@@ -258,7 +258,7 @@
             <div class="chat-container" id="chatContainer">
                 <div class="empty-state">
                     <div class="empty-icon">💭</div>
-                    <p>Ask a question to get started</p>
+                    <p>Upload a CSV file and ask a question to get started</p>
                 </div>
             </div>
         </div>
@@ -266,9 +266,6 @@
     
     <script>
         const API_URL = 'https://csv-analysis-agent.onrender.com';
-        
-        // Get base URL (works for both local and production)
-        const BASE_URL = window.location.origin;
         
         const uploadArea = document.getElementById('uploadArea');
         const fileInput = document.getElementById('fileInput');
@@ -278,6 +275,7 @@
         const chatContainer = document.getElementById('chatContainer');
         const errorContainer = document.getElementById('errorContainer');
         
+        let uploadedFile = null;
         let uploadedFileName = '';
         
         // File upload handling
@@ -309,16 +307,19 @@
         });
         
         function handleFileUpload(file) {
-            const formData = new FormData();
-            formData.append('file', file);
-            
-            // Since we're using static hosting, we'll store the filename
-            // In a real deployment, you'd upload to a cloud storage
+            uploadedFile = file;
             uploadedFileName = file.name;
-            fileName.textContent = `✓ ${file.name}`;
+            fileName.textContent = `✓ ${file.name} loaded`;
             
-            // Add system message about the file
-            addMessage('system', `File "${file.name}" is ready for analysis. You can now ask questions about it.`);
+            // Read file content
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                // File is loaded as text in e.target.result
+                console.log('File loaded, size:', e.target.result.length, 'chars');
+            };
+            reader.readAsText(file);
+            
+            addMessage('system', `File "${file.name}" loaded. Now ask your question!`);
         }
         
         // Send message
@@ -335,14 +336,41 @@
             sendBtn.disabled = true;
             
             try {
+                const requestBody = {
+                    user_input: question
+                };
+                
+                // If file is uploaded, include its content
+                if (uploadedFile) {
+                    requestBody.filename = uploadedFileName;
+                    
+                    // Read file as base64
+                    const reader = new FileReader();
+                    reader.onload = async function(e) {
+                        const csvContent = e.target.result;
+                        requestBody.csv_content = btoa(unescape(encodeURIComponent(csvContent)));
+                        
+                        await sendRequest(requestBody);
+                    };
+                    reader.readAsText(uploadedFile);
+                } else {
+                    await sendRequest(requestBody);
+                }
+            } catch (error) {
+                showError('Error: ' + error.message);
+                hideLoading();
+                sendBtn.disabled = false;
+            }
+        }
+        
+        async function sendRequest(requestBody) {
+            try {
                 const response = await fetch(`${API_URL}/ask`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({
-                        user_input: question + (uploadedFileName ? ` (file: ${uploadedFileName})` : '')
-                    })
+                    body: JSON.stringify(requestBody)
                 });
                 
                 if (!response.ok) {
@@ -352,7 +380,7 @@
                 const data = await response.json();
                 addMessage('ai', data.agent_response);
             } catch (error) {
-                showError('Failed to connect to the API. Please make sure the backend is deployed and running.');
+                showError('Failed to connect to the API: ' + error.message);
             } finally {
                 hideLoading();
                 sendBtn.disabled = false;

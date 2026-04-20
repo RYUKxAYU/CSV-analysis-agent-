@@ -4,21 +4,23 @@ from dotenv import load_dotenv
 from langchain_groq import ChatGroq
 from langchain.agents import create_agent
 
-from tools import read_notebook, write_notebook, query_csv 
+from tools import read_notebook, write_notebook, query_csv, analyze_csv, save_file, get_file
 
 load_dotenv()
 
 # Group them into the list the agent expects
-TOOLS = [read_notebook, write_notebook, query_csv]
+TOOLS = [read_notebook, write_notebook, query_csv, analyze_csv]
 
 SYSTEM_MESSAGE = (
     "You are a helpful assistant that can read/write text files and analyze CSV data. "
-    "Use the provided tools to perform actions. When a CSV is mentioned, use query_csv first."
+    "When a file_id is provided (e.g., 'Use file_id: xyz'), use analyze_csv with that file_id. "
+    "When a CSV filepath is provided, use query_csv. "
+    "Use analyze_csv first when analyzing uploaded files."
 )
 
 # Initialize Groq LLM
 llm = ChatGroq(
-    model="openai/gpt-oss-20b", 
+    model="llama-3.1-70b-versatile", 
     temperature=0,
     groq_api_key=os.getenv("GROQ_API_KEY")
 )
