@@ -18,7 +18,7 @@ SYSTEM_MESSAGE = (
 
 # Initialize Groq LLM
 llm = ChatGroq(
-    model="openai/gpt-oss-20b", 
+    model="llama-3.1-70b-versatile", 
     temperature=0,
     groq_api_key=os.getenv("GROQ_API_KEY")
 )
