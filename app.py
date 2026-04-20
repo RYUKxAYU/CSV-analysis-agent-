@@ -5,6 +5,10 @@ import os
 st.set_page_config(page_title="CSV AI Agent", layout="wide")
 st.title("🤖 CSV AI Agent")
 
+# Determine API URL based on environment
+# For local development, use localhost; for production, use Render
+API_URL = os.environ.get("API_URL", "http://localhost:8000")
+
 # Sidebar: File Upload
 with st.sidebar:
     st.header("Upload Data")
@@ -25,7 +29,7 @@ if st.button("Send"):
         with st.spinner("Agent is thinking..."):
             # Send request to your FastAPI backend
             try:
-                response = requests.post("http://localhost:8000", json={"user_input": user_query})
+                response = requests.post(f"{API_URL}/ask", json={"user_input": user_query})
                 
                 if response.status_code == 200:
                     st.markdown(f"**Agent:** {response.json()['agent_response']}")
