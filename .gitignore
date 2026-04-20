@@ -1,4 +1,7 @@
+# Vercel
 .vercel/
+
+# Python
 .venv/
 venv/
 __pycache__/
@@ -6,11 +9,39 @@ __pycache__/
 *.pyo
 *.pyd
 .Python
-.DS_Store
-.env*
+*.egg-info/
+dist/
+build/
+
+# Environment
 .env
+.env.*
+!.env.example
 
-.vercel
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
 
-.vercel
-.env*.local
+# OS
+.DS_Store
+Thumbs.db
+
+# Node
+node_modules/
+.next/
+out/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Test
+.pytest_cache/
+coverage/
+
+# GCP
+gcp-key.json
+*.json
+!package.json

@@ -1,18 +1,22 @@
-# Use a lightweight Python image
-FROM python:3-slim
+FROM python:3.11-slim
 
-# Set the working directory
 WORKDIR /app
 
-# Copy dependency list and install
-COPY requirements.txt .
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    gcc \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements and install
+COPY backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the rest of your code
-COPY . .
+# Copy backend code
+COPY backend/ .
 
-# Expose the port FastAPI runs on
+# Expose port
 EXPOSE 8000
 
-# Command to run the app using uvicorn
-CMD ["uvicorn", "api.index:app", "--host", "0.0.0.0", "--port", "8000"]
+# Run the app
+CMD ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000"]
